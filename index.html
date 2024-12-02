@@ -5,11 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat with Cohere AI - Powered by Command</title>
     <meta name="description" content="Experience the power of Cohere's AI-assistant chatbot. Ask questions, share files, and receive thorough and helpful responses. Join us now!">
-    <meta name="keywords" content="Cohere AI, AI-assistant, chatbot, Command, thorough responses, helpful, open-source">
+    <meta name="keywords" content="Cohere AI, AI-assistant, chatbot, Command, thorough responses, helpful, open-source, file sharing, code writing, live view">
+    <meta name="author" content="Rekt Developer">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Chat with Cohere AI - Powered by Command">
+    <meta property="og:description" content="Experience the power of Cohere's AI-assistant chatbot. Ask questions, share files, and receive thorough and helpful responses. Join us now!">
+    <meta property="og:image" content="https://rekt-developer.github.io/chat-with-cohore/preview.png">
+    <meta property="og:url" content="https://rekt-developer.github.io/chat-with-cohore/">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="https://rekt-developer.github.io/chat-with-cohore/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai.min.css">
     <style>
-        /* Custom styles for SEO enhancement */
         body {
             background-color: #f8f9fa;
             font-family: 'Arial', sans-serif;
@@ -31,7 +38,6 @@
             font-size: 24px;
             border-bottom: 1px solid #e9ecef;
         }
-        /* Enhanced chat message styles */
         .chat-message {
             margin-bottom: 15px;
             padding: 10px;
@@ -49,7 +55,6 @@
             background: #e9ecef;
             color: #000;
         }
-        /* Copy icon for code blocks */
         .code-block .copy-icon {
             position: absolute;
             top: 5px;
@@ -60,7 +65,6 @@
         .code-block .copy-icon:hover {
             color: #fff;
         }
-        /* Live view iframe */
         .live-view {
             margin-top: 10px;
             padding: 10px;
@@ -72,6 +76,65 @@
             width: 100%;
             height: 300px;
             border: none;
+        }
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        .chat-input input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .chat-input button {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background: #0056b3;
+        }
+        .file-input {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .code-block pre {
+            margin: 0;
+        }
+        .live-view-button {
+            margin-top: 10px;
+            padding: 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+        }
+        .live-view-button:hover {
+            background: #0056b3;
         }
     </style>
 </head>
@@ -207,9 +270,47 @@
         const iframe = document.createElement('iframe');
         iframe.srcdoc = code;
         liveViewDiv.appendChild(iframe);
+        const liveViewButton = document.createElement('button');
+        liveViewButton.classList.add('live-view-button');
+        liveViewButton.innerHTML = 'Live View';
+        liveViewButton.addEventListener('click', () => {
+            addLiveView(code);
+        });
+        liveViewDiv.appendChild(liveViewButton);
         chatBody.appendChild(liveViewDiv);
         chatBody.scrollTop = chatBody.scrollHeight;
     }
+
+    // Example of adding a live view button for HTML code
+    function handleCodeInput() {
+        const code = userInput.value.trim();
+        if (code.startsWith('<') && code.endsWith('>')) {
+            addLiveView(code);
+        } else {
+            sendMessage();
+        }
+    }
+
+    userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleCodeInput();
+        }
+    });
+
+    document.getElementById('file-input').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                addMessage('user', `File: ${file.name}`);
+                addMessage('user', content);
+                sendFile();
+            };
+            reader.readAsText(file);
+        }
+    });
 </script>
 
 </body>
